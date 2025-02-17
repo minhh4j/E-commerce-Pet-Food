@@ -1,0 +1,33 @@
+/* HeroSection.css */
+.slick-list {
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  /* Top-to-bottom animation for the first slide */
+  .slick-list.top-to-bottom {
+    transform: translateY(0);
+    animation: slide-top-to-bottom 1s forwards;
+  }
+  
+  @keyframes slide-top-to-bottom {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  
+  /* Default left-to-right animation for other slides */
+  .slick-list {
+    animation: slide-left-to-right 1s forwards;
+  }
+  
+  @keyframes slide-left-to-right {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
