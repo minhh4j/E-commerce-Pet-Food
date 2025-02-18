@@ -11,10 +11,9 @@ export const endpoint = {
         SEARCH: '/products/search',        
     },
     WISHLIST: {
-        GET_ALL: '/users/wishlist',
-        ADD: (productId) => `/users/wishlist/${productId}`,
-        REMOVE: (productId) => `/users/wishlist/${productId}`,
-        CLEAR: '/users/wishlist',
+        GET_ALL: '/user/wishlist',
+        ADD: (productId) => `/user/wishlist/${productId}`,
+        REMOVE: (productId) => `/user/wishlist/${productId}`,
     },
     CART: {
         GET_ALL: '/user/cart',

@@ -17,6 +17,7 @@ import ProtectedAdmin from "./admin/ProtectedAdmin";
 import DefaultPage from "./homepage/DefaultPage";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Wishlist from "./wishlist/wishlist";
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="signin" element={<Signupdup />} />
             <Route path="login" element={<LoginForm />} />
+            <Route path="wishlist" element={<Wishlist />}/>
             <Route path="cartlist" element={<Cart />} />
             <Route path="orders" element={<Orders />} />
             <Route path="payment" element={<PaymentForm />} />

@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setSearch } from "../Slices/SearchSlice"; 
 import { fetchCartAsync } from "../Slices/CartSlice";
+import { GiLoveHowl } from "react-icons/gi";
 
 function Nav() {
   const dispatch = useDispatch();
@@ -91,6 +92,13 @@ function Nav() {
 
         {/* Navigation Icons */}
         <div className="flex items-center space-x-6 text-sm md:text-base">
+        <div
+            className="flex flex-col items-center text-gray-600 cursor-pointer hover:text-blue-500"
+            onClick={() => navigate("/wishlist")}
+          >
+            <GiLoveHowl size="1.5em" />
+            <span>Wishlist</span>
+          </div>
           <div
             className="flex flex-col items-center text-gray-600 cursor-pointer hover:text-blue-500"
             onClick={() => navigate("/orders")}

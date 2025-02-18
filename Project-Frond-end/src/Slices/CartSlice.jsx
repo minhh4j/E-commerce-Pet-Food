@@ -8,6 +8,7 @@ export const fetchCartAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(endpoint.CART.GET_ALL);
+
       return response.data.cart;
     } catch (error) {
       console.log(error);
@@ -35,19 +36,18 @@ export const addToCart = createAsyncThunk(
   }
 );
 
-// Decrement Product in DB and Cart Async
-export const decrementProductInDBAndCartAsync = createAsyncThunk(
+
+export const updateQuantity = createAsyncThunk(
   "cart/decrementProductInDBAndCart",
-  async (productId, { rejectWithValue }) => {
+  async ({ productId, action }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.patch(
-        endpoint.CART.UPDATE_QUANTITY(productId, "decrement")
+      const response = await axiosInstance.put(
+        endpoint.CART.UPDATE_QUANTITY(productId, action)
       );
-      return response.data.cart;
+     
+      return { cart: response.data.cart, message: response.data.message };
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data || "Error decrementing product quantity."
-      );
+      return rejectWithValue(error.response?.data);
     }
   }
 );
@@ -60,7 +60,9 @@ export const removeFromCartAsync = createAsyncThunk(
       const response = await axiosInstance.delete(
         endpoint.CART.REMOVE_PRODUCT(productId)
       );
-      return response.data.cart;
+      console.log(response, "oo");
+
+      return { cart: response.data.cart, message: response.data.message };
     } catch (error) {
       return rejectWithValue(
         error.response?.data || "Error removing product from cart."
@@ -72,7 +74,7 @@ export const removeFromCartAsync = createAsyncThunk(
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
-    cart: null, // Ensure `cart` is an object with `products` array
+    cart: null,
     loading: false,
     error: null,
   },
@@ -90,7 +92,7 @@ const cartSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchCartAsync.fulfilled, (state, action) => {
-        state.cart = action.payload; // Full cart response
+        state.cart = action.payload;
         state.loading = false;
       })
       .addCase(fetchCartAsync.rejected, (state, action) => {
@@ -98,20 +100,24 @@ const cartSlice = createSlice({
         state.loading = false;
       })
       .addCase(addToCart.fulfilled, (state, action) => {
-        state.cart = action.payload.cart; // Update cart with products
+        state.cart = action.payload.cart;
       })
       .addCase(removeFromCartAsync.fulfilled, (state, action) => {
         state.cart = action.payload.cart;
       })
-      .addCase(decrementProductInDBAndCartAsync.fulfilled, (state, action) => {
-        state.cart = action.payload.products;
+      .addCase(updateQuantity.pending, (state) => {
+        state.loading = true;
+    })
+    .addCase(updateQuantity.fulfilled, (state) => {
         state.loading = false;
+        // state.cart = action.payload;     
         state.error = null;
-      })
-      .addCase(decrementProductInDBAndCartAsync.rejected, (state, action) => {
-        state.error = action.payload;
+        
+    })
+    .addCase(updateQuantity.rejected, (state, action) => {
         state.loading = false;
-      });
+        state.error = action.payload;
+    })
   },
 });
 

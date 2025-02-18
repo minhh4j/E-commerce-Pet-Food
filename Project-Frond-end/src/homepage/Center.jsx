@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts, setPage } from "../Slices/ProductSlice";
 import { addToCart } from "../Slices/CartSlice";
 import { toast, ToastContainer } from "react-toastify";
+import { AiFillHeart } from "react-icons/ai";
+import { addProductToWishlist, getUserWishlist } from "../Slices/WishlistSlice";
 
 function Center() {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -15,7 +17,6 @@ function Center() {
     (state) => state.products
   );
   // const searchQuery = useSelector((state) => state.search.query);
-
   useEffect(() => {
     if (selectedCategory === "all") {
       setFilteredProducts(products);
@@ -37,6 +38,18 @@ function Center() {
     });
   };
 
+  const handleAddToWishlist = (product) => {
+    dispatch(addProductToWishlist(product._id)).then((response) => {
+        if (response.payload.wishlist?.message) {
+            toast.info(response.payload.wishlist?.message);
+        } else {
+            toast.success("Added to wishlist, available under profile");
+        }
+        dispatch(getUserWishlist())
+    });
+};
+  
+  
   useEffect(() => {
     dispatch(fetchProducts({ page: currentPage, limit: 10 }));
   }, [dispatch, currentPage]);
@@ -119,8 +132,7 @@ function Center() {
 
       <audio ref={catAudioRef} src="/assets/cat-sound.wav"></audio>
       <audio ref={dogAudioRef} src="/assets/dog-sound.wav"></audio>
-      
-      
+
       {/* Loading & Error Handling */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
@@ -136,7 +148,7 @@ function Center() {
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
             {filteredProducts.map((item) => (
               <div className="flex justify-center" key={item.id}>
-                <div className="w-40 h-full overflow-hidden transition-transform duration-300 rounded-lg shadow-md bg-sky-300 card hover:scale-105 hover:shadow-xl">
+                <div className="w-40 h-full overflow-hidden transition-transform duration-300 rounded-lg shadow-md bg-sky-300 card hover:scale-105 hover:shadow-xl ">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -156,6 +168,11 @@ function Center() {
                       onClick={() => handleAddToCartClick(item)}
                     >
                       Add to Cart
+                    </button>
+                    <br />
+                    <br />
+                    <button onClick={() => handleAddToWishlist(item)}>
+                    <AiFillHeart size='1em' className="text-blue-600 hover:text-red-500" />
                     </button>
                   </div>
                 </div>
@@ -194,3 +211,9 @@ function Center() {
   );
 }
 export default Center;
+
+
+
+
+
+
