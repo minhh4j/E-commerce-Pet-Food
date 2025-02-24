@@ -84,7 +84,7 @@ const increaseQuantity = async (userId , productId) => {
   const product = await Product.findById(productId);
   if(!product) throw new CustomError('Product not found', 404)
 
-  if(item.quantity+1 > product.stock){
+  if(item.quantity +1 > product.stock){
     throw new CustomError('Not enough stock available', 400)
   }
 

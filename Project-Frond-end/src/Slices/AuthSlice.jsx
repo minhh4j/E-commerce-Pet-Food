@@ -11,6 +11,7 @@ const initialState = {
 };
 
 // Async thunk for fetching user details
+
 export const fetchUserDetails = createAsyncThunk(
   "auth/fetchUserDetails",
   async (_, { rejectWithValue }) => {
@@ -22,6 +23,19 @@ export const fetchUserDetails = createAsyncThunk(
         return rejectWithValue("Please login with your credentials");
       }
       return rejectWithValue(error.response?.data || "Failed to fetch user details");
+    }
+  }
+);
+
+
+export const logoutUser = createAsyncThunk(
+  'auth/logoutUser',
+  async (_, { rejectWithValue }) => {
+    try {
+      await axiosInstance.post(endpoint.AUTH.LOGOUT);
+      return;
+    } catch (error) {
+      return rejectWithValue(error);
     }
   }
 );
@@ -51,7 +65,22 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.isAuthenticated = false;
-      });
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.adminAuthenticated = false;
+        state.error = null;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
   },
 });
 

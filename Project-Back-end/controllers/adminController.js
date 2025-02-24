@@ -51,8 +51,8 @@ exports.topSaleProducts = asyncHandler(async (req, res) => {
 
 // Order status
 
-exports.changeOrderStatus = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const updatedOrder = await adminSarvices.changeOrderStatus(id);
-  res.status(200).json(updatedOrder);
-});
+// exports.changeOrderStatus = asyncHandler(async (req, res) => {
+//   const { id } = req.params;
+//   const updatedOrder = await adminSarvices.changeOrderStatus(id);
+//   res.status(200).json(updatedOrder);
+// });

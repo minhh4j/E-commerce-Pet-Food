@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { setSearch } from "../Slices/SearchSlice"; 
 import { fetchCartAsync } from "../Slices/CartSlice";
 import { GiLoveHowl } from "react-icons/gi";
+import { logoutUser } from "../Slices/AuthSlice";
 
 function Nav() {
   const dispatch = useDispatch();
@@ -16,10 +17,14 @@ function Nav() {
   const ref = useRef(null);
 
   const username = localStorage.getItem("username");
-  const isLoggedIn = Boolean(localStorage.getItem("id"));
+  const isLoggedIn = Boolean(localStorage.getItem("username"));
 
   const { cart } = useSelector((state) => state.cart);
   const { query } = useSelector((state) => state.search); 
+  const { auth } = useSelector((state) => state.auth)
+  
+  console.log(auth , 'auth')
+  
   
   useEffect(() => {
     dispatch(fetchCartAsync())
@@ -51,7 +56,13 @@ function Nav() {
   const logout = () => {
     try {
       localStorage.clear();
-      navigate("/login");
+      dispatch(logoutUser())
+      .then(() => {
+        navigate("/login");
+      })
+      .catch((error) => {
+          console.error("Logout error:", error);
+      });
     } catch (error) {
       console.error("Error clearing localStorage:", error);
     }

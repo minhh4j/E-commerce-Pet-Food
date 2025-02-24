@@ -29,6 +29,7 @@ exports.getProducts = asyncHandler(async (req, res) => {
 exports.addProducts = asyncHandler(async (req, res) => {
     const productData = req.body;
 
+    console.log(productData,"product data....")
     if (req.file && req.file.path) {
         productData.image = req.file.path;
     } else {

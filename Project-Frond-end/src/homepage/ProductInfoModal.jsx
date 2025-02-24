@@ -1,81 +1,125 @@
-import React, { useContext } from "react";
-// import { ProductContext } from "../Context/ProductContext";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useParams, Link } from "react-router-dom";
+import { fetchProducts } from "../Slices/ProductSlice";
+import { addToCart } from "../Slices/CartSlice";
+import { toast, ToastContainer } from "react-toastify";
 
-const ProductModal = ({ product, onClose }) => {
-  if (!product) return null;
+function ProductInfoPage() {
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const { products, loading, error } = useSelector((state) => state.products);
+  const [product, setProduct] = useState(null);
 
-  const { addToCart } = useContext(ProductContext);
-
-  const handleAddToCartClick = (item) => {
-    if (!localStorage.getItem("id")) {
-      alert("Please log in to add items to your cart.");
-    } else {
-      addToCart(item);
-      alert(`${item.name} added to cart!`);
+  useEffect(() => {
+    if (!products.length) {
+      dispatch(fetchProducts());
     }
+  }, [dispatch, products.length]);
+
+  useEffect(() => {
+    if (products.length) {
+      const foundProduct = products.find((item) => String(item._id) === String(id));
+      setProduct(foundProduct || null);
+    }
+  }, [products, id]);
+
+  const handleAddToCartClick = async (product) => {
+    dispatch(addToCart(product._id)).then((response) => {
+      if (response?.payload) {
+        toast.error(response.payload);
+      }
+      if (response?.payload?.message) {
+        toast.success(response?.payload?.message);
+      }
+    });
   };
+
+  if (loading) {
+    return <h1 className="mt-10 text-xl font-semibold text-center">Loading product...</h1>;
+  }
+
+  if (error) {
+    return <h1 className="mt-10 text-xl text-center text-red-500">Error: {error}</h1>;
+  }
+
+  if (!product) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <h1 className="text-2xl font-semibold text-red-600">Product Not Found</h1>
+        <Link to="/" className="px-4 py-2 mt-4 text-white bg-gray-500 rounded-md hover:bg-gray-700">
+          Go Back
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative w-full max-w-3xl p-6 text-white bg-gray-800 rounded-lg shadow-lg">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute text-2xl font-bold text-white top-4 right-4"
-        >
-          &times;
-        </button>
+    <div className="container px-4 py-8 mx-auto">
+      <ToastContainer position="top-right" autoClose={500} />
 
-        {/* Modal Content */}
-        <div className="flex flex-col gap-6 md:flex-row">
-          {/* Product Image */}
-          <div className="w-full md:w-1/3">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="object-cover w-full rounded-lg"
-            />
+      {/* Back Button */}
+      <Link to="/" className="text-gray-700 hover:underline">← Back to Products</Link>
+
+      <div className="grid grid-cols-1 gap-8 mt-6 md:grid-cols-2">
+        {/* Product Image */}
+        <div className="flex justify-center">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="object-cover w-full max-w-md rounded-lg shadow-lg"
+          />
+        </div>
+
+        {/* Product Details */}
+        <div>
+          <h1 className="text-3xl font-semibold">{product.name}</h1>
+          <p className="mt-2 text-lg text-gray-500">Category: <span className="font-medium text-gray-700">{product.category}</span></p>
+
+          {/* Price */}
+          <div className="flex items-center mt-3 space-x-4">
+            {product.oldPrice && (
+              <p className="text-xl font-medium text-gray-400 line-through">₹{product.oldPrice}</p>
+            )}
+            <p className="text-2xl font-bold text-blue-600">₹{product.price}</p>
           </div>
 
-          {/* Product Details */}
-          <div className="w-full md:w-2/3">
-            <h2 className="text-2xl font-bold">{product.name}</h2>
-            <p className="mt-2 text-sm text-gray-400">
-              {product.description || "No description available."}
+          {/* Seller Info */}
+          <p className="mt-2 text-gray-600">
+            <span className="font-semibold">Sold by:</span> {product.seller}
+          </p>
+
+          {/* Description */}
+          <p className="mt-4 text-gray-700">{product.description}</p>
+
+          {/* Ingredients */}
+          {product.ingredients && (
+            <p className="mt-3 text-gray-600">
+              <span className="font-semibold">Ingredients:</span> {product.ingredients.join(", ")}
             </p>
-            <div className="mt-4">
-              <p className="text-lg font-semibold">
-                Price: ₹{product.price ? product.price.toFixed(2) : "N/A"}
-              </p>
-              {product.oldPrice && (
-                <p className="text-sm text-gray-400 line-through">
-                  Old Price: ₹{product.oldPrice.toFixed(2)}
-                </p>
-              )}
-            </div>
-            <p className="mt-4 text-sm">
-              <strong>Ingredients:</strong>{" "}
-              {product.ingredients ? product.ingredients.join(", ") : "N/A"}
-            </p>
-            <p className="mt-2 text-sm">
-              <strong>Seller:</strong> {product.seller || "Unknown"}
-            </p>
-            <p className="mt-2 text-sm">
-              <strong>Stock Left:</strong>{" "}
-              {product.stock !== undefined
-                ? `${product.stock} items`
-                : "Out of stock"}
-            </p>
+          )}
+
+          {/* Stock */}
+          <p className="mt-2">
+            <span className="font-semibold">Stock:</span>{" "}
+            <span className={`font-medium ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}>
+              {product.stock > 0 ? "Available" : "Out of Stock"}
+            </span>
+          </p>
+
+          {/* Action Buttons */}
+          <div className="flex mt-6 space-x-4">
+            <button
+              className="px-5 py-2 text-white transition bg-blue-600 rounded-md hover:bg-blue-800"
+              onClick={() => handleAddToCartClick(product)}
+            >
+              Add to Cart
+            </button>
           </div>
-          <button
-            className="px-4 py-2 mt-2 text-xs font-semibold text-blue-600 transition border border-blue-600 rounded-full hover:bg-blue-100"
-            onClick={() => handleAddToCartClick(product)}
-          >
-            Add to Cart
-          </button>
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default ProductModal;
+export default ProductInfoPage;

@@ -1,11 +1,22 @@
-import React, { useContext } from "react";
-import { BiLogOut } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
-import { AdminContext } from "../Context/AdminContext";
+import { logoutUser } from "../Slices/AuthSlice";
+import { useDispatch } from "react-redux";
 
 function SideBar() {
+  
   const navigate = useNavigate();
-  const {adminLogout} = useContext(AdminContext)
+  const dispatch = useDispatch()
+  
+  const confirmLogout = () => {
+    localStorage.clear()
+    dispatch(logoutUser())
+        .then(() => {
+            navigate("/login");
+        })
+        .catch((error) => {
+            console.error("Logout error:", error);
+        });
+};
 
   return (
     <div className="flex h-screen">
@@ -44,7 +55,7 @@ function SideBar() {
             Products
           </button>
           <button className="w-full p-3 text-lg text-left transition-colors duration-300 rounded-md cursor-pointer hover:bg-gray-700 hover:text-white"
-          onClick={adminLogout}
+          onClick={confirmLogout}
           >
             Logout
           </button>

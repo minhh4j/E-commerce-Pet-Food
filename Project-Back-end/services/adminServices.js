@@ -46,6 +46,7 @@ exports.blockUnblock = async (id) => {
 };
 
 
+
 //  get all orders
 
 exports.getAllOrderesProduct = async (page, limit) => {
@@ -116,11 +117,6 @@ exports.getTopSellProducts = async () => {
     throw new Error(`Failed to get top selling products: ${error.message}`);
   }
 }
-
-
-
-
-
 
 
 

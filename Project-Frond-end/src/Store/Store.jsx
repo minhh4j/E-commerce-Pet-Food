@@ -5,7 +5,7 @@ import SearchReducer from "../Slices/SearchSlice"
 import OrdersReducer from "../Slices/OrderSlice"
 import AuthReducer from '../Slices/AuthSlice'
 import wishlistReducer from '../Slices/WishlistSlice'
-
+import AdminRouter from '../Slices/adminSlice'
 export const Store = configureStore({
     reducer:{
     products:ProductReducer,
@@ -14,6 +14,7 @@ export const Store = configureStore({
     search:SearchReducer,
     auth:AuthReducer,
     wishlist:wishlistReducer,
+    admin:AdminRouter
     }
 })
 

@@ -1,18 +1,15 @@
 
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import React, { useContext, useEffect } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer, } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { AdminContext } from "../Context/AdminContext";
 import axiosInstance from "../api/axiosInstance";
 import { endpoint } from "../api/endpoints";
 
 function LoginForm() {
-  
-  const {adminLogin} = useContext(AdminContext)
+ 
   const initialValues = {
     email: "",
     password: "",
@@ -32,8 +29,9 @@ function LoginForm() {
   const onSubmit = async (values) => {
     try{
       const response = await axiosInstance.post(endpoint.AUTH.LOGIN , values)
-      const userRole = await response.data.user.isAdmin ? 'admin' : 'user'
-      navigate(userRole === 'admin' ? '/admin' : '/')
+      const userRole = await response.data.user.role 
+      navigate(userRole === 'user' ? '/' : '/adminpage/dashboard')
+      localStorage.setItem('username' , response.data.user.username)
       toast.success(response.data.message);
     }
     catch(error){

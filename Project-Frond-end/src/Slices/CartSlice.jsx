@@ -8,6 +8,8 @@ export const fetchCartAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(endpoint.CART.GET_ALL);
+      console.log(response);
+      
 
       return response.data.cart;
     } catch (error) {
@@ -27,7 +29,7 @@ export const addToCart = createAsyncThunk(
       const response = await axiosInstance.post(endpoint.CART.ADD_TO_CART(id));
       console.log(response);
 
-      return response.data; // Ensure the response is the full cart
+      return response.data; 
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Error adding to cart"
@@ -44,10 +46,12 @@ export const updateQuantity = createAsyncThunk(
       const response = await axiosInstance.put(
         endpoint.CART.UPDATE_QUANTITY(productId, action)
       );
-     
-      return { cart: response.data.cart, message: response.data.message };
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data);
+      console.log(error);
+      
+      return rejectWithValue(error)
+      
     }
   }
 );
@@ -94,6 +98,7 @@ const cartSlice = createSlice({
       .addCase(fetchCartAsync.fulfilled, (state, action) => {
         state.cart = action.payload;
         state.loading = false;
+        state.error=false;
       })
       .addCase(fetchCartAsync.rejected, (state, action) => {
         state.error = action.error.message;
@@ -109,14 +114,14 @@ const cartSlice = createSlice({
         state.loading = true;
     })
     .addCase(updateQuantity.fulfilled, (state) => {
-        state.loading = false;
-        // state.cart = action.payload;     
+        state.loading = false;    
         state.error = null;
         
     })
-    .addCase(updateQuantity.rejected, (state, action) => {
+    .addCase(updateQuantity.rejected, (state, ) => {
         state.loading = false;
-        state.error = action.payload;
+        // state.error = action.payload;
+        
     })
   },
 });

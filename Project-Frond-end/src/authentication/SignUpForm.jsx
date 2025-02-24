@@ -1,5 +1,3 @@
-import axios from "axios"//;
-import React from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import "tailwindcss/tailwind.css"; 
