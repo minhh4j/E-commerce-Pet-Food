@@ -63,7 +63,6 @@ exports.deleteProduct = asyncHandler( async (req,res) => {
 exports.updateProduct = asyncHandler( async (req ,res) => {
     const {id} = req.params;
     const updateData = req.body;
-    console.log(req.body, "body");
     
 
     if(req.file){

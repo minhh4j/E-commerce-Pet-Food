@@ -5,11 +5,7 @@ const CustomError = require("../utils/customError");
 exports.getProductService = async ({ id, page, limit, name, category }) => {
   const skip = (page - 1) * limit;
 
- 
-
   const match = { isDeleted: false };
-
-  // search bsed on
 
   if (name) {
     match.name = { $regex: name, $options: "i" };
@@ -48,8 +44,7 @@ exports.getProductService = async ({ id, page, limit, name, category }) => {
   return { product, total, totalCatCategory, totalDogCategory };
 };
 
-
-// add product 
+ 
 
 exports.addProducts = async (productData) => {
   const existingProduct = await Product.findOne({name:productData.name})
@@ -60,7 +55,6 @@ exports.addProducts = async (productData) => {
   return product
 }
 
-// delete product 
 
 exports.deleteProduct = async(productId) => {
   const product = await Product.findByIdAndUpdate(
@@ -76,7 +70,6 @@ exports.deleteProduct = async(productId) => {
 
 
 
-// edit product 
 
 exports.updateProducts = async (productId,updateData) => {
   
